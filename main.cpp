@@ -25,8 +25,8 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  const char* glsl_version = "#version 330";
-  glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
+  const char* glsl_version = "#version 430";
+  glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
   glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 0 );
 
   GLFWwindow* window = glfwCreateWindow( 1280, 720, "Satisfactory Scheme", NULL, NULL );
@@ -48,7 +48,7 @@ int main( int argc, char **argv )
 
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-  Shader current_shader( "shaders/shaders.vert", "shaders/shaders.frag" );
+  Shader current_shader( "./shaders/shaders.vert", "./shaders/shaders.frag" );
 
   while( !glfwWindowShouldClose( window ) ) {
 

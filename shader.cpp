@@ -13,6 +13,9 @@ public:
 
   Shader( const char* vertex_path, const char* frag_path )
   {
+    if( glewInit() != GLEW_OK ) {
+      std::cerr << "ERROR opening glew instance" << std::endl;
+    }
     std::string vert_code;
     std::string frag_code;
     
@@ -56,7 +59,7 @@ public:
       glGetShaderInfoLog( vertex, 512, NULL, info_log );
       std::cout << "ERROR: shader vertex compilation failed\n" << info_log << std::endl;
     }
-
+    
     fragment = glCreateShader( GL_FRAGMENT_SHADER );
     glShaderSource( fragment, 1, &c_frag_code, NULL );
     glCompileShader( fragment );
@@ -78,7 +81,7 @@ public:
 
     glDeleteShader( vertex );
     glDeleteShader( fragment );
-    
+
   }
 
   void activate()
