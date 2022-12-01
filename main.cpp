@@ -4,12 +4,17 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "./dependencies/imgui/imgui.h"
 #include "./dependencies/imgui/imgui_internal.h"
 #include "./dependencies/imgui/backends/imgui_impl_glfw.h"
 #include "./dependencies/imgui/backends/imgui_impl_opengl3.h"
 
 #include "shader.cpp"
+#include "draw.cpp"
 
 static void glfw_error_callback( int error, const char* description )
 {
@@ -58,16 +63,22 @@ int main( int argc, char **argv )
 			0.0, -0.5, 0.0,
 			-0.5, 0.0, 0.0 };
 
+  float colors[4*3] = { 0.9, 0.3, 0.1, 0.0,
+			0.3, 0.1, 0.9, 0.0,
+			0.1, 0.8, 0.1, 0.0
+  };
+  
   uint32_t indices[3] = { 2, 1, 0 };
-  float colors[4] = { 0.9, 0.3, 0.1, 0.0 };
 
   Shader current_shader( "./shaders/shaders.vert", "./shaders/shaders.frag" );
 
-  current_shader.create_vao( 9 * sizeof( float ),
-			     3 * sizeof( uint32_t ),
-			     4 * sizeof( float ),
+  current_shader.create_vao( 3 * 3 * sizeof( float ),
+			     3 * 1 * sizeof( uint32_t ),
+			     4 * 3 * sizeof( float ),
 			     vertex, indices, colors );
   current_shader.activate();
+
+  glm::vec3 xyz(0.0, 0.0, 0.0 );
   
   while( !glfwWindowShouldClose( window ) ) {
 
@@ -88,7 +99,10 @@ int main( int argc, char **argv )
     
     ImGui::NewFrame();
 
-    ImGui::Begin("Hello");
+    ImGui::Begin("Modify Triangle");
+    ImGui::SliderFloat( "X Axis", &xyz[0], 0.0, 1.0 );
+    ImGui::SliderFloat( "Y Axis", &xyz[1], 0.0, 1.0 );
+    ImGui::SliderFloat( "Z Axis", &xyz[2], 0.0, 1.0 );
     ImGui::Text("Sample Text");
     ImGui::End();
 
@@ -107,6 +121,21 @@ int main( int argc, char **argv )
     
     glClear( GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT );
 
+    // Identity 4x4 Matrix
+    glm::mat4 matrix( 1.0f );
+
+    matrix = glm::translate( matrix, xyz );
+    
+    GLint transform = glGetUniformLocation( current_shader.Program_ID,
+    					    "transform" );
+    
+    glUniformMatrix4fv(
+		       transform,
+		       1,
+		       GL_FALSE,
+		       glm::value_ptr( matrix )
+		       );
+    
     glBindVertexArray( current_shader.VAO_ID() );
     glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL );
     
