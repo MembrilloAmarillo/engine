@@ -17,8 +17,7 @@ static void glfw_error_callback( int error, const char* description )
 }
 
 int main( int argc, char **argv )
-{
-
+{  
   glfwSetErrorCallback( glfw_error_callback );
 
   if( !glfwInit() ) {
@@ -46,10 +45,30 @@ int main( int argc, char **argv )
   ImGui_ImplGlfw_InitForOpenGL( window, true );
   ImGui_ImplOpenGL3_Init( glsl_version );
 
+  glEnable( GL_DEPTH_TEST );
+  glDepthFunc( GL_LESS );
+  glEnable( GL_CULL_FACE );
+  glDisable( GL_MULTISAMPLE );
+  glEnable( GL_BLEND );
+  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+  float vertex[3*3] = { 0.5, 0.5, 0.0,
+			0.0, -0.5, 0.0,
+			-0.5, 0.0, 0.0 };
+
+  uint32_t indices[3] = { 2, 1, 0 };
+  float colors[4] = { 0.9, 0.3, 0.1, 0.0 };
 
   Shader current_shader( "./shaders/shaders.vert", "./shaders/shaders.frag" );
 
+  current_shader.create_vao( 9 * sizeof( float ),
+			     3 * sizeof( uint32_t ),
+			     4 * sizeof( float ),
+			     vertex, indices, colors );
+  current_shader.activate();
+  
   while( !glfwWindowShouldClose( window ) ) {
 
     // Poll and handle events (inputs, window resize, etc.)
@@ -66,8 +85,15 @@ int main( int argc, char **argv )
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
+    
     ImGui::NewFrame();
 
+    ImGui::Begin("Hello");
+    ImGui::Text("Sample Text");
+    ImGui::End();
+
+    ImGui::EndFrame();
+    
     // Rendering
     ImGui::Render();
     int display_w, display_h;
@@ -79,8 +105,11 @@ int main( int argc, char **argv )
 		  clear_color.z * clear_color.w,
 		  clear_color.w );
     
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear( GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT );
 
+    glBindVertexArray( current_shader.VAO_ID() );
+    glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL );
+    
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(window);

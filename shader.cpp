@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
+#include <cassert>
 
 #include <GL/glew.h>
 
@@ -89,6 +91,89 @@ public:
     glUseProgram( Program_ID );
   }
 
+  void create_vao( size_t size_v,
+		   size_t size_i,
+		   size_t size_c,
+		   float* vertex,
+		   uint32_t* indices,
+		   float* colors
+		  )
+  {
+    array_ID  = 0;
+    buffer_ID = 0;
+    index_ID  = 0;
+    color_ID  = 0;
+    attrib_ID = 0;
+    stride    = 3;
+
+    std::cout << "[INFO] Size of vertex array : " << size_v << std::endl;
+    std::cout << "[INFO] Size of index array  : " << size_i << std::endl;
+
+    glGenVertexArrays( 1, &array_ID );
+    glBindVertexArray( array_ID );
+
+    create_vbo( vertex, buffer_ID, size_v );
+
+    stride = 4; // RGBA
+    attrib_ID += 1;
+
+    create_vbo( colors, color_ID, size_c );
+
+    assert( array_ID  != 0 );
+    assert( buffer_ID != 0 );
+    assert( color_ID  != 0 );
+
+    create_ibo( indices, size_i );
+
+    assert( index_ID != 0 );
+  }
+  
+  void create_vbo( float* vertices, uint32_t& vbo, size_t size_v )
+  {
+    glGenBuffers( 1, &vbo );
+    glBindBuffer( GL_ARRAY_BUFFER, vbo );
+
+    glBufferData(
+		 GL_ARRAY_BUFFER,
+		 size_v,
+		 vertices,
+		 GL_STATIC_DRAW
+		 );
+    
+    glVertexAttribPointer(
+			  attrib_ID,
+			  3,
+			  GL_FLOAT,
+			  GL_FALSE,
+			  stride * sizeof( float ),
+			  NULL
+			  );
+    
+    glEnableVertexAttribArray( attrib_ID );
+			  
+		 
+  }
+  void create_ibo( uint32_t* indices, size_t size_v )
+  {
+    glGenBuffers( 1, &index_ID );
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, index_ID );
+    glBufferData(
+		 GL_ELEMENT_ARRAY_BUFFER,
+		 size_v,
+		 indices,
+		 GL_STATIC_DRAW
+		 );
+  }
+
+  uint32_t VAO_ID() const { return array_ID; } 
+
 private:
+
+  uint32_t array_ID;
+  uint32_t buffer_ID;
+  uint32_t index_ID;
+  uint32_t color_ID;
+  uint32_t attrib_ID;
+  uint32_t stride;
   
 };
