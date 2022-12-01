@@ -78,7 +78,7 @@ int main( int argc, char **argv )
 			     vertex, indices, colors );
   current_shader.activate();
 
-  glm::vec3 xyz(0.0, 0.0, 0.0 );
+  glm::vec3 xyz( 0.0, 0.0, 0.0 );
   
   while( !glfwWindowShouldClose( window ) ) {
 
@@ -96,17 +96,31 @@ int main( int argc, char **argv )
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
-    
+
     ImGui::NewFrame();
 
-    ImGui::Begin("Modify Triangle");
+    ImGui::ShowMetricsWindow();
+    
+    ImGui::Begin("Translate Triangle");		 
     ImGui::SliderFloat( "X Axis", &xyz[0], 0.0, 1.0 );
     ImGui::SliderFloat( "Y Axis", &xyz[1], 0.0, 1.0 );
     ImGui::SliderFloat( "Z Axis", &xyz[2], 0.0, 1.0 );
-    ImGui::Text("Sample Text");
     ImGui::End();
+    
+    //ImGui::ColorEdit4( "Colors", colors );
 
+    ImGui::Begin( "Triangle parameters" );
+    
+    if( ImGui::CollapsingHeader( "Color" ) ) {
+      ImGui::Text( "Colors of triangle" );
+      ImGui::Separator();
+      ImGui::Text( "Rotation of triangle" );
+    }
+
+    ImGui::End();
+    
     ImGui::EndFrame();
+    
     
     // Rendering
     ImGui::Render();
