@@ -80,6 +80,8 @@ int main()
   current_shader.activate();
 
   glm::vec3 xyz( 0.0, 0.0, 0.0 );
+  glm::vec3 rot( 0.0, 0.0, 0.0 );
+  float angle = 0.0f;
   
   while( !glfwWindowShouldClose( window ) ) {
 
@@ -106,6 +108,13 @@ int main()
     ImGui::SliderFloat( "X Axis", &xyz[0], 0.0, 1.0 );
     ImGui::SliderFloat( "Y Axis", &xyz[1], 0.0, 1.0 );
     ImGui::SliderFloat( "Z Axis", &xyz[2], 0.0, 1.0 );
+    ImGui::End();
+
+    ImGui::Begin("Rotation Triangle");		 
+    ImGui::SliderFloat( "X Axis", &rot[0], 0.0, 1.0 );
+    ImGui::SliderFloat( "Y Axis", &rot[1], 0.0, 1.0 );
+    ImGui::SliderFloat( "Z Axis", &rot[2], 0.0, 1.0 );
+    ImGui::SliderFloat( "Angle", &angle, 0.0, 2.0 * glm::pi<float>()  );
     ImGui::End();
     
     //ImGui::ColorEdit4( "Colors", colors );
@@ -136,23 +145,11 @@ int main()
     
     glClear( GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT );
 
-    // Identity 4x4 Matrix
-    glm::mat4 matrix( 1.0f );
-
-    matrix = glm::translate( matrix, xyz );
-    
-    GLint transform = glGetUniformLocation( current_shader.Program_ID,
-    					    "transform" );
-    
-    glUniformMatrix4fv(
-		       transform,
-		       1,
-		       GL_FALSE,
-		       glm::value_ptr( matrix )
-		       );
+    translate_triangle( xyz, current_shader.Program_ID );
+    rotate_triangle( rot, angle, current_shader.Program_ID );
     
     glBindVertexArray( current_shader.VAO_ID() );
-    glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL );
+    glDrawElements( GL_TRIANGLES, sizeof( indices ), GL_UNSIGNED_INT, NULL );
     
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
