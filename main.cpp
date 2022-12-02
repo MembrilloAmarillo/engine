@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdint>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -8,10 +9,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "./dependencies/imgui/imgui.h"
-#include "./dependencies/imgui/imgui_internal.h"
-#include "./dependencies/imgui/backends/imgui_impl_glfw.h"
-#include "./dependencies/imgui/backends/imgui_impl_opengl3.h"
+#include "dependencies/imgui/imgui.h"
+#include "dependencies/imgui/imgui_internal.h"
+#include "dependencies/imgui/backends/imgui_impl_glfw.h"
+#include "dependencies/imgui/backends/imgui_impl_opengl3.h"
 
 #include "shader.cpp"
 #include "draw.cpp"
@@ -21,7 +22,7 @@ static void glfw_error_callback( int error, const char* description )
   fprintf( stderr, "GLFW Error %d: %s\n", error, description );
 }
 
-int main( int argc, char **argv )
+int main()
 {  
   glfwSetErrorCallback( glfw_error_callback );
 

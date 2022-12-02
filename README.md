@@ -6,7 +6,8 @@ Under development, so it does have 0 things added yet
 ### Dependencies
 - GLFW
 - ImGui (included on dependencies)
-- glm
+- glm   (included on dependencies)
+- GLEW
 
-You can download glm with the next command:
-- Fedora: sudo dnf install glm-devel
+In case of Windows you need to enter un 'build.bat' file and change LIBPATH to specify the directory
+where you have GLFW and GLEW
