@@ -1,5 +1,3 @@
-
-
 void translate_triangle( glm::vec3& translate, uint32_t shader_id )
 {
   glm::mat4 matrix( 1.0f );
@@ -32,3 +30,21 @@ void rotate_triangle( glm::vec3& rotate, float angle, uint32_t shader_id )
 		     glm::value_ptr( matrix )
 		     );
 }
+
+void scale_triangle( glm::vec3& scale, uint32_t shader_id )
+{
+  glm::mat4 matrix( 1.0f );
+
+  matrix = glm::scale( matrix, scale );
+
+  GLint scalation = glGetUniformLocation( shader_id, "scale" );
+      
+  glUniformMatrix4fv(
+		     scalation,
+		     1,
+		     GL_FALSE,
+		     glm::value_ptr( matrix )
+		     );
+}
+
+

@@ -1,12 +1,3 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <cassert>
-
-#include <GL/glew.h>
-
 class Shader {
 
 public:
@@ -18,37 +9,13 @@ public:
     if( glewInit() != GLEW_OK ) {
       std::cerr << "ERROR opening glew instance" << std::endl;
     }
-    std::string vert_code;
-    std::string frag_code;
     
-    std::ifstream vertex_file;
-    std::ifstream frag_file;
-
-    vertex_file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-    frag_file.exceptions( std::ifstream::failbit | std::ifstream::badbit );
-    
-    try {
-      vertex_file.open( vertex_path );
-      frag_file.open( frag_path );       
-
-      std::stringstream vert_stream, frag_stream;
-
-      vert_stream << vertex_file.rdbuf();
-      frag_stream << frag_file.rdbuf();
-
-      vertex_file.close();
-      frag_file.close();
-
-      vert_code = vert_stream.str();
-      frag_code = frag_stream.str();
-
-    } catch( std::ifstream::failure e ) {
-      std::cout << "ERROR: Shader file not succesfully read" << std::endl;
-    }
+    std::string vert_code = read_from_file( vertex_path );
+    std::string frag_code = read_from_file( frag_path );
 
     const char* c_vert_code = vert_code.c_str();
     const char* c_frag_code = frag_code.c_str();
-
+    
     unsigned int vertex, fragment;
     int success;
     char info_log[512];
@@ -94,9 +61,9 @@ public:
   void create_vao( size_t size_v,
 		   size_t size_i,
 		   size_t size_c,
-		   float* vertex,
-		   uint32_t* indices,
-		   float* colors
+		   std::vector< float >&    vertex,
+		   std::vector< uint32_t >& indices,
+		   std::vector< float >&     colors
 		  )
   {
     array_ID  = 0;
@@ -128,7 +95,7 @@ public:
     assert( index_ID != 0 );
   }
   
-  void create_vbo( float* vertices, uint32_t& vbo, size_t size_v )
+  void create_vbo( std::vector<float>& vertices, uint32_t& vbo, size_t size_v )
   {
     glGenBuffers( 1, &vbo );
     glBindBuffer( GL_ARRAY_BUFFER, vbo );
@@ -136,7 +103,7 @@ public:
     glBufferData(
 		 GL_ARRAY_BUFFER,
 		 size_v,
-		 vertices,
+		 &vertices,
 		 GL_STATIC_DRAW
 		 );
     
@@ -153,14 +120,14 @@ public:
 			  
 		 
   }
-  void create_ibo( uint32_t* indices, size_t size_v )
+  void create_ibo( std::vector< uint32_t >& indices, size_t size_v )
   {
     glGenBuffers( 1, &index_ID );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, index_ID );
     glBufferData(
 		 GL_ELEMENT_ARRAY_BUFFER,
 		 size_v,
-		 indices,
+		 &indices,
 		 GL_STATIC_DRAW
 		 );
   }
