@@ -1,5 +1,28 @@
 #include "dependencies.hpp"
 
+/*
+  TODO:
+
+  Model:
+  - Keep debugging 'load_obj_file'
+  - Model some landscape
+  - Model more complex object (having at least 1 joint)
+
+  Lighting:
+  - Implement simple lighting
+
+  Camera:
+  - Implement camera view
+
+  Projection:
+  - Implement perspective projection
+
+  Cleanup:
+  - Cleanup Imgui functions
+  - Create some sort of memory managment
+  
+ */
+
 static void glfw_error_callback( int error, const char* description )
 {
   fprintf( stderr, "GLFW Error %d: %s\n", error, description );
@@ -42,31 +65,17 @@ int main()
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-  #if 0
-  float vertex[3*3] = { 0.5, 0.5, 0.0,
-			0.0, -0.5, 0.0,
-			-0.5, 0.0, 0.0 };  
-  uint32_t indices[3] = { 2, 1, 0 };
-
-  #endif
-
-  std::vector< float > colors = { 0.9, 0.3, 0.1, 0.0,
-				  0.3, 0.1, 0.9, 0.0,
-				  0.1, 0.8, 0.1, 0.0
-  };
-
   
   Shader current_shader( "./shaders/shaders.vert", "./shaders/shaders.frag" );
 
   struct OBJ* obj = load_obj_file( "./assets/sphere.obj" );
   
-  current_shader.create_vao( obj->vertices.size() * sizeof( float ),
-			     obj->indices.size()  * sizeof( uint32_t ),
-			     colors.size() * sizeof( float ),
+  current_shader.create_vao( obj->n_vertices * sizeof( float ),
+			     obj->n_indices  * sizeof( uint32_t ),
+			     obj->n_normals  * sizeof( float ),
 			     obj->vertices,
 			     obj->indices,
-			     colors
+			     obj->normals
 			     );
   current_shader.activate();
 
@@ -141,7 +150,7 @@ int main()
     rotate_triangle( rot, angle, current_shader.Program_ID );
     
     glBindVertexArray( current_shader.VAO_ID() );
-    glDrawElements( GL_TRIANGLES, obj->indices.size(), GL_UNSIGNED_INT, NULL );
+    glDrawElements( GL_TRIANGLES, obj->n_indices, GL_UNSIGNED_INT, NULL );
     
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

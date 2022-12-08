@@ -61,9 +61,9 @@ public:
   void create_vao( size_t size_v,
 		   size_t size_i,
 		   size_t size_c,
-		   std::vector< float >&    vertex,
-		   std::vector< uint32_t >& indices,
-		   std::vector< float >&     colors
+		   float*    vertex,
+		   uint32_t* indices,
+		   float*    colors
 		  )
   {
     array_ID  = 0;
@@ -72,9 +72,6 @@ public:
     color_ID  = 0;
     attrib_ID = 0;
     stride    = 3;
-
-    std::cout << "[INFO] Size of vertex array : " << size_v << std::endl;
-    std::cout << "[INFO] Size of index array  : " << size_i << std::endl;
 
     glGenVertexArrays( 1, &array_ID );
     glBindVertexArray( array_ID );
@@ -95,7 +92,7 @@ public:
     assert( index_ID != 0 );
   }
   
-  void create_vbo( std::vector<float>& vertices, uint32_t& vbo, size_t size_v )
+  void create_vbo( float* vertices, uint32_t& vbo, size_t size_v )
   {
     glGenBuffers( 1, &vbo );
     glBindBuffer( GL_ARRAY_BUFFER, vbo );
@@ -103,7 +100,7 @@ public:
     glBufferData(
 		 GL_ARRAY_BUFFER,
 		 size_v,
-		 &vertices,
+		 vertices,
 		 GL_STATIC_DRAW
 		 );
     
@@ -120,14 +117,14 @@ public:
 			  
 		 
   }
-  void create_ibo( std::vector< uint32_t >& indices, size_t size_v )
+  void create_ibo( uint32_t* indices, size_t size_v )
   {
     glGenBuffers( 1, &index_ID );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, index_ID );
     glBufferData(
 		 GL_ELEMENT_ARRAY_BUFFER,
 		 size_v,
-		 &indices,
+		 indices,
 		 GL_STATIC_DRAW
 		 );
   }
