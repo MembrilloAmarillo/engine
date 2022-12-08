@@ -123,16 +123,7 @@ struct OBJ* load_obj_file( const char* path )
       i++;
     }
   }
-  
-#if 0
-  for( size_t j = 0; j < obj->indices.size(); j++ ) {
-    uint32_t index = obj->indices[j];
-    float    value = vertices[ index - 1 ];
-    obj->vertices.push_back( value );
-  }
-  
-#else
-
+ 
   obj->n_vertices        = vertices.size();       
   obj->n_textures        = textures.size();       
   obj->n_normals         = normals.size();        
@@ -159,8 +150,11 @@ struct OBJ* load_obj_file( const char* path )
 
   memmove( obj->normals, &*( normals.begin() ), normals.size() * sizeof( float ) );
   
-#endif
-  
+  for( size_t j = 0; j < obj->n_indices; j++ ) {
+    obj->indices[j] = obj->indices[j] - 1;
+  }
+ 
+
   std::cout << "[INFO] Size of vertex array  : " <<  obj->n_vertices << std::endl;
   std::cout << "[INFO] Size of index array   : " <<  obj->n_indices << std::endl;
   std::cout << "[INFO] Size of normal array  : " <<  obj->n_normals << std::endl;
