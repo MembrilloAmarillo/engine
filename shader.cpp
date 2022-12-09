@@ -59,33 +59,42 @@ public:
   }
 
   void create_vao( size_t size_v,
-		   size_t size_i,
-		   size_t size_c,
-		   float*    vertex,
-		   uint32_t* indices,
-		   float*    colors
+                  size_t size_i,
+                  size_t size_c,
+                  size_t size_tex,
+                  float    *vertex,
+                  uint32_t *indices,
+                  float    *colors,
+		          float    *textures
 		  )
   {
-    array_ID  = 0;
-    buffer_ID = 0;
-    index_ID  = 0;
-    color_ID  = 0;
-    attrib_ID = 0;
-    stride    = 3;
+    array_ID   = 0;
+    buffer_ID  = 0;
+    index_ID   = 0;
+    color_ID   = 0;
+	texture_ID = 0;
+    attrib_ID  = 0;
+    stride     = 3;
 
     glGenVertexArrays( 1, &array_ID );
     glBindVertexArray( array_ID );
 
     create_vbo( vertex, buffer_ID, size_v );
 
-    stride = 4; // RGBA
+    //stride = 4; RGBA
     attrib_ID += 1;
 
     create_vbo( colors, color_ID, size_c );
 
-    assert( array_ID  != 0 );
-    assert( buffer_ID != 0 );
-    assert( color_ID  != 0 );
+	stride = 2;
+	attrib_ID += 1;
+
+	create_vbo( textures, texture_ID, size_tex );
+
+    assert( array_ID   != 0 );
+    assert( buffer_ID  != 0 );
+    assert( color_ID   != 0 );
+	assert( texture_ID != 0 );
 
     create_ibo( indices, size_i );
 
@@ -139,5 +148,5 @@ private:
   uint32_t color_ID;
   uint32_t attrib_ID;
   uint32_t stride;
-  
+  uint32_t texture_ID;
 };

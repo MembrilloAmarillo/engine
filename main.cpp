@@ -69,18 +69,25 @@ int main()
   Shader current_shader( "./shaders/shaders.vert", "./shaders/shaders.frag" );
 
   struct OBJ* obj = load_obj_file( "./assets/sphere.obj" );
+  struct Camera camera;
+  camera.init_camera();
+  camera.to_shader(current_shader.Program_ID);
   
-  current_shader.create_vao( obj->n_vertices * sizeof( float ),
-			     obj->n_indices  * sizeof( uint32_t ),
-			     obj->n_normals  * sizeof( float ),
-			     obj->vertices,
-			     obj->indices,
-			     obj->normals
-			     );
+  current_shader.create_vao(obj->n_vertices * sizeof(float),
+                            obj->n_indices  * sizeof(uint32_t),
+                            obj->n_normals  * sizeof(float),
+                            obj->n_textures * sizeof(float),
+                            obj->vertices,
+                            obj->indices,
+                            obj->normals,
+                            obj->textures
+                            );
   current_shader.activate();
 
   glm::vec3 xyz( 0.0, 0.0, 0.0 );
   glm::vec3 rot( 0.0, 0.0, 0.0 );
+  glm::vec3 scl( 0.0, 0.0, 0.0 );
+  glm::vec3 camera_input( 0.0, 0.0, 0.0 );
   float angle = 0.0f;
   
   while( !glfwWindowShouldClose( window ) ) {
@@ -116,18 +123,30 @@ int main()
     ImGui::SliderFloat( "Z Axis", &rot[2], -1.0, 1.0 );
     ImGui::SliderFloat( "Angle", &angle, 0.0, 2.0 * glm::pi<float>()  );
     ImGui::End();
+
+	ImGui::Begin("Scale Triangle");		 
+	ImGui::SliderFloat( "X Axis", &scl[0], 0.0, 1.0 );
+	ImGui::SliderFloat( "Y Axis", &scl[1], 0.0, 1.0 );
+	ImGui::SliderFloat( "Z Axis", &scl[2], 0.0, 1.0 );
+	ImGui::End();
+
+	ImGui::Begin("Camera");		 
+	ImGui::SliderFloat( "X Axis", &camera_input[0], 0.0, 1.0 );
+	ImGui::SliderFloat( "Y Axis", &camera_input[1], 0.0, 1.0 );
+	ImGui::SliderFloat( "Z Axis", &camera_input[2], 0.0, 1.0 );
+	ImGui::End();
     
     //ImGui::ColorEdit4( "Colors", colors );
 
-    ImGui::Begin( "Triangle parameters" );
-    
-    if( ImGui::CollapsingHeader( "Color" ) ) {
-      ImGui::Text( "Colors of triangle" );
-      ImGui::Separator();
-      ImGui::Text( "Rotation of triangle" );
-    }
+    //ImGui::Begin( "Triangle parameters" );
+    //
+    //if( ImGui::CollapsingHeader( "Color" ) ) {
+    //  ImGui::Text( "Colors of triangle" );
+    //  ImGui::Separator();
+    //  ImGui::Text( "Rotation of triangle" );
+    //}
 
-    ImGui::End();
+    //ImGui::End();
     
     ImGui::EndFrame();
     
@@ -146,6 +165,11 @@ int main()
     
     glClear( GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT );
 
+	camera.translate_input(camera_input);
+	camera.to_shader(current_shader.Program_ID);
+	scale_triangle( scl, current_shader.Program_ID);
+
+	perspective_projection(45.0f, display_w, display_h, current_shader.Program_ID);
     translate_triangle( xyz, current_shader.Program_ID );
     rotate_triangle( rot, angle, current_shader.Program_ID );
     
@@ -157,6 +181,17 @@ int main()
     glfwSwapBuffers(window);
     
   }
+
+  std::cout << "[MEMORY] Freeing struct OBJ" << std::endl;
+  free(obj->vertices);
+  free(obj->normals);
+  free(obj->textures);
+  free(obj->indices);
+  free(obj->normals_indices);
+  free(obj->texture_indices);
+
+  free(obj);
+  std::cout << "[GUI] Cleanup Imgui & GLFW" << std::endl;
 
   // Cleanup
   ImGui_ImplOpenGL3_Shutdown();

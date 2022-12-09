@@ -25,15 +25,13 @@ struct OBJ* load_obj_file( const char* path )
   std::vector<float> vertices;
   std::vector<float> textures;
   std::vector<float> normals;
-#if 1
   std::vector<uint32_t> indices;
   std::vector<uint32_t> texture_indices;
   std::vector<uint32_t> normals_indices;
-#endif
   
   std::string sfile = read_from_file( path );
 
-  std::cout << "Start reading object         : " << path << std::endl;
+  std::cout << "[MODEL] Start reading object         : " << path << std::endl;
 
   int i = 0;
   while( i < sfile.size() ) {
@@ -138,29 +136,28 @@ struct OBJ* load_obj_file( const char* path )
   obj->texture_indices = ( uint32_t* )malloc( texture_indices.size() * sizeof( uint32_t ) );
   obj->normals_indices = ( uint32_t* )malloc( normals_indices.size() * sizeof( uint32_t ) );
 
-  memmove( obj->indices, &*indices.begin(), indices.size() * sizeof( uint32_t ) );
+  memmove( obj->indices, indices.data(), indices.size() * sizeof( uint32_t ) );
 
-  memmove( obj->texture_indices, &*( texture_indices.begin() ), texture_indices.size() * sizeof( uint32_t ) );
+  memmove( obj->texture_indices, texture_indices.data(), texture_indices.size() * sizeof( uint32_t ) );
   
-  memmove( obj->normals_indices, &*normals_indices.begin(), normals_indices.size() * sizeof( uint32_t ) );
+  memmove( obj->normals_indices, normals_indices.data(), normals_indices.size() * sizeof( uint32_t ) );
   
-  memmove( obj->vertices, &*( vertices.begin() ), vertices.size() * sizeof( float ) );
+  memmove( obj->vertices, vertices.data(), vertices.size() * sizeof( float ) );
 
-  memmove( obj->textures, &*( textures.begin() ), textures.size() * sizeof( float ) );
+  memmove( obj->textures, textures.data(), textures.size() * sizeof( float ) );
 
-  memmove( obj->normals, &*( normals.begin() ), normals.size() * sizeof( float ) );
+  memmove( obj->normals, normals.data(), normals.size() * sizeof( float ) );
   
   for( size_t j = 0; j < obj->n_indices; j++ ) {
     obj->indices[j] = obj->indices[j] - 1;
   }
  
-
-  std::cout << "[INFO] Size of vertex array  : " <<  obj->n_vertices << std::endl;
-  std::cout << "[INFO] Size of index array   : " <<  obj->n_indices << std::endl;
-  std::cout << "[INFO] Size of normal array  : " <<  obj->n_normals << std::endl;
-  std::cout << "[INFO] Size of texture array : " <<  obj->n_textures << std::endl;
+  std::cout << "    [INFO] Size of vertex array  : " <<  obj->n_vertices << std::endl;
+  std::cout << "    [INFO] Size of index array   : " <<  obj->n_indices  << std::endl;
+  std::cout << "    [INFO] Size of normal array  : " <<  obj->n_normals  << std::endl;
+  std::cout << "    [INFO] Size of texture array : " <<  obj->n_textures << std::endl;
   
-  std::cout << "Finished reading object      : " << path << std::endl;
+  std::cout << "[MODEL] Finished reading object      : " << path << std::endl;
     
   return obj;
 }
