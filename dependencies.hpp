@@ -23,6 +23,9 @@
 #include "dependencies/imgui/backends/imgui_impl_glfw.h"
 #include "dependencies/imgui/backends/imgui_impl_opengl3.h"
 
+#include "utils.h"
+#include "draw.h"
+
 /* SRC */
 #include "utils.cpp"
 #include "shader.cpp"

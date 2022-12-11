@@ -15,6 +15,9 @@ struct OBJ {
     size_t n_texture_indices;
     size_t n_normals_indices;
     
+    // TODO: Make the free() here instead
+    ~OBJ() {} 
+    
 } OBJ;
 
 struct OBJ* load_obj_file( const char* path )
@@ -49,7 +52,7 @@ struct OBJ* load_obj_file( const char* path )
                 i += 2; // skip space
                 while( sfile[i] != '\n' ) {
                     if( sfile[i] == ' ' ) {
-                        textures.push_back( atof( temp.c_str() ) );
+                        textures.push_back( (float)atof( temp.c_str() ) );
                         temp = "";
                         
                     } else {
@@ -57,14 +60,14 @@ struct OBJ* load_obj_file( const char* path )
                     }
                     i++;
                 }
-                textures.push_back( atof( temp.c_str() ) );
+                textures.push_back( (float)atof( temp.c_str() ) );
             }
             else if( sfile[i] == 'n' ) {
                 std::string temp = "";
                 i += 2; // skip space
                 while( sfile[i] != '\n' ) {
                     if( sfile[i] == ' ' ) {
-                        normals.push_back( atof( temp.c_str() ) );
+                        normals.push_back( (float)atof( temp.c_str() ) );
                         temp = "";
                         
                     } else {
@@ -72,14 +75,14 @@ struct OBJ* load_obj_file( const char* path )
                     }
                     i++;
                 }
-                normals.push_back( atof( temp.c_str() ) );
+                normals.push_back( (float)atof( temp.c_str() ) );
             }
             else {
                 std::string temp = "";
                 i++;
                 while( sfile[i] != '\n' ) {
                     if( sfile[i] == ' ' ) {
-                        vertices.push_back( atof( temp.c_str() ) );
+                        vertices.push_back( (float)atof( temp.c_str() ) );
                         temp = "";
                         
                     } else {
@@ -87,7 +90,7 @@ struct OBJ* load_obj_file( const char* path )
                     }
                     i++;
                 }
-                vertices.push_back( atof( temp.c_str() ) );
+                vertices.push_back( (float)atof( temp.c_str() ) );
             }
         }
         else if( sfile[i] == 'f' ) {

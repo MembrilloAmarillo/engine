@@ -35,9 +35,9 @@ std::string read_from_file( const char* file_path )
 
 void normalize_vector( float* vector, size_t vector_len )
 {
-    float max_x, min_x;
-    float max_y, min_y;
-    float max_z, min_z;
+    float max_x = 0, min_x = 0;
+    float max_y = 0, min_y = 0;
+    float max_z = 0, min_z = 0;
     
     for( int i = 0; i < vector_len - 3; i++ ) {
         if( vector[i] >= max_x ) {

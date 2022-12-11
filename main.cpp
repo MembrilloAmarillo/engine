@@ -122,7 +122,7 @@ int main()
         ImGui::SliderFloat( "X Axis", &rot[0], -1.0, 1.0 );
         ImGui::SliderFloat( "Y Axis", &rot[1], -1.0, 1.0 );
         ImGui::SliderFloat( "Z Axis", &rot[2], -1.0, 1.0 );
-        ImGui::SliderFloat( "Angle", &angle, 0.0, 2.0 * glm::pi<float>()  );
+        ImGui::SliderFloat( "Angle", &angle, 0.0, 2.0f * glm::pi<float>()  );
         ImGui::End();
         
         ImGui::Begin("Scale Triangle");		 
@@ -192,6 +192,7 @@ int main()
         rotate_triangle( rot, angle, current_shader.Program_ID );
         
         glBindVertexArray( current_shader.VAO_ID() );
+        // TODO: Check if size_t and GLsizei have the same size
         glDrawElements( GL_TRIANGLES, obj->n_indices, GL_UNSIGNED_INT, NULL );
         
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -43,7 +43,18 @@ command_list =
             { "make", .os = "linux" },
         },
     },
-    
+    {
+        .name = "devenv",
+        .out = "*compilation*",
+        .footer_panel = true,
+        .save_dirty_files = true,
+        .cursor_at_end = false,
+        .cmd =
+        {
+            { "devenv build\\main.exe", .os = "win" },
+            { "gdb ./ss", .os = "linux" },
+        },
+    },
     {
         .name = "run",
         .out = "*compilation*",
@@ -53,7 +64,7 @@ command_list =
         .cmd =
         {
             { "build\\main.exe", .os = "win" },
-            { "echo Linux run command not implemented for 4coder project.", .os = "linux" },
+            { "./ss", .os = "linux" },
         },
     },
     
@@ -61,3 +72,4 @@ command_list =
 
 fkey_command[1] = "build";
 fkey_command[2] = "run";
+fkey_command[3] = "devenv";

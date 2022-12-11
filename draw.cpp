@@ -50,11 +50,11 @@ void scale_triangle(glm::vec3& scale, uint32_t shader_id)
                        );
 }
 
-void perspective_projection(float angle, float width, float height, glm::vec3& motion, uint32_t shader_id)
+void perspective_projection(float angle, int width, int height, glm::vec3& motion, uint32_t shader_id)
 {
 	glm::mat4 projection = glm::perspective(
                                             glm::radians( angle ),
-                                            width / height,
+                                            (float)width / (float)height,
                                             0.1f,
                                             100.0f);
     glm::mat4 matrix( 1.0f );
@@ -71,48 +71,35 @@ void perspective_projection(float angle, float width, float height, glm::vec3& m
                        );
 }
 
-struct Camera {
+void Camera::init_camera() {
+    camera_position  = glm::vec3(0.0f, 0.0f, 3.0f);
+    camera_target    = glm::vec3(0.0f, 0.0f, 0.0f);
+    camera_direction = glm::normalize(camera_position - camera_target);
     
-	glm::vec3 camera_position;
-	glm::vec3 camera_target;
-	glm::vec3 camera_direction;
-	glm::vec3 camera_right;
-	glm::vec3 camera_up;
-	glm::mat4 view;
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    camera_right = glm::normalize(glm::cross(up, camera_direction));
     
-    glm::vec3 last_input;
+    camera_up = glm::cross(camera_direction, camera_right);
     
-	void init_camera() {
-		camera_position  = glm::vec3(0.0f, 0.0f, 3.0f);
-		camera_target    = glm::vec3(0.0f, 0.0f, 0.0f);
-		camera_direction = glm::normalize(camera_position - camera_target);
-		
-		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-		camera_right = glm::normalize(glm::cross(up, camera_direction));
-        
-		camera_up = glm::cross(camera_direction, camera_right);
-        
-		view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
-		                   glm::vec3(0.0f, 0.0f, 0.0f),
-		                   glm::vec3(0.0f, 1.0f, 0.0f));
-        last_input = glm::vec3(0.0f, 1.0f, 0.0f); 
-	}
+    view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
+                       glm::vec3(0.0f, 0.0f, 0.0f),
+                       glm::vec3(0.0f, 1.0f, 0.0f));
+    last_input = glm::vec3(0.0f, 1.0f, 0.0f); 
+}
+
+void Camera::translate_input(glm::vec3 input) {
+    if( input != last_input ) {
+        view = glm::translate(view, input);
+        last_input = input;
+    }
+}
+
+void Camera::to_shader(uint32_t shader_id) {
+    GLint camera_view = glGetUniformLocation(shader_id, "view");
     
-	void translate_input(glm::vec3 input) {
-        if( input != last_input ) {
-            view = glm::translate(view, input);
-            last_input = input;
-        }
-	}
-    
-	void to_shader(uint32_t shader_id) {
-		GLint camera_view = glGetUniformLocation(shader_id, "view");
-        
-		glUniformMatrix4fv( camera_view,
-		                   1,
-		                   GL_FALSE,
-		                   glm::value_ptr( view )
-		                   );                   
-	}
-    
-};
+    glUniformMatrix4fv( camera_view,
+                       1,
+                       GL_FALSE,
+                       glm::value_ptr( view )
+                       );                   
+}
