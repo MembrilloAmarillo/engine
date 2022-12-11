@@ -14,10 +14,10 @@ out vec4 ourColor;
 
 void main()
 {
-	vec4 value = projection * view * scale * vec4(aPos, 1.0f);
-
-	gl_Position = translation * rotation * value;
-
+	vec4 value = projection * scale * vec4(aPos, 1.0f);
+    
+	gl_Position = translation * rotation *  value;
+    
     ourColor = aColor;
 }
 
