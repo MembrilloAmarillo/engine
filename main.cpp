@@ -18,8 +18,9 @@
 
   Cleanup:
   - Cleanup Imgui functions
-  - Create some sort of memory managment (arena memory?)
-- Refactoring
+  
+  Memory:
+  - Implement Arena Memory Allocation
   
  */
 
@@ -68,7 +69,7 @@ int main()
     
     Shader current_shader( "./shaders/shaders.vert", "./shaders/shaders.frag" );
     
-    struct OBJ* obj = load_obj_file( "./assets/sphere.obj" );
+    struct OBJ* obj = load_obj_file( "./assets/taza.obj" );
     struct Camera camera;
     camera.init_camera();
     camera.to_shader(current_shader.Program_ID);
