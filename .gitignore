@@ -1,6 +1,10 @@
 # Prerequisites
 *.d
 
+# Windows
+build/
+*.vs
+
 # Compiled Object files
 *.slo
 *.lo
@@ -32,3 +36,4 @@
 
 # Projects
 project.10x
+.vscode
