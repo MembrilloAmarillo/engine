@@ -1,5 +1,7 @@
-# satisfactory_scheme
-Scheme to organize factories on Satisfactory game
+# ENGINE
+For now its a simple 3D object visualizer, but is 
+supposed to be a useful game engine at one point
+for my own projects
 
 Under development, so it does have 0 things added yet
 
